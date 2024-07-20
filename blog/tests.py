@@ -21,6 +21,7 @@ class Test_Create_Post(TestCase):
             author_id=1,
             status='published'
         )
+        
     def test_blog_content(self):
         post = Post.postobjects.get(id=1)
         cat = Category.objects.get(id=1)
