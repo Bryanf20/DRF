@@ -138,7 +138,7 @@ REST_FRAMEWORK = {
     # Default authentication package to authenticate user to allow access to data
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
 }
 
 # System wide Permissions:
@@ -150,6 +150,7 @@ REST_FRAMEWORK = {
 # Its good to use allowany for project wide permissions so it doesn't affect user login,
 # then use view level permissions for each view 
 
+# User that are allowed to access api
 CORS_ALLOWED_ORIGINS = [
     # "http://127.0.0.1:5173",
     "http://localhost:5173",
