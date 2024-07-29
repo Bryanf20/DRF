@@ -1,7 +1,7 @@
 from rest_framework import generics
 from blog.models import Post
 from .serializers import PostSerializer
-from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAdminUser, DjangoModelPermissionsOrAnonReadOnly, DjangoModelPermissions
+from rest_framework.permissions import SAFE_METHODS, BasePermission, DjangoModelPermissionsOrAnonReadOnly, IsAdminUser, DjangoModelPermissions
 
 # Created views here.
 class PostUserWritePermission(BasePermission): # permision so that only those who created a post can delete it
@@ -14,6 +14,7 @@ class PostUserWritePermission(BasePermission): # permision so that only those wh
 
 class PostList(generics.ListCreateAPIView):
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    # permission_classes = [IsAdminUser]
     queryset = Post.postobjects.all()
     serializer_class = PostSerializer
 
