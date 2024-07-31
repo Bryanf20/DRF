@@ -16,6 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# from rest_framework.schemas import get_schema_view
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+# from rest_framework.documentation import include_docs_urls
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -28,5 +31,14 @@ urlpatterns = [
     path('', include('blog.urls', namespace='blog')),
     path('api/', include('blog_api.urls', namespace='blog_api')),
     path('api/user/', include('users.urls', namespace='users')),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')), # Allow access to rest framework urls so we can make use of the authentication that comes with it
+    # Allow access to rest framework urls so we can make use of the authentication that comes with it
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')), 
+    # API Schema
+    # path('schema/', get_schema_view( title="BlogAPI", description="my first api. API for the blogapi", version="1.0.0"), name="openapi-schema"),
+    # path('docs/', include_docs_urls(title='BlogAPI')),
+    # API Schema PATTERNS using drf-spectacular
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
