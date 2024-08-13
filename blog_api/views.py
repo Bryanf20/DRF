@@ -5,6 +5,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission, DjangoModel
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework import filters
 
 # Created views here.
 class PostUserWritePermission(BasePermission): # permision so that only those who created a post can delete it
@@ -15,20 +16,77 @@ class PostUserWritePermission(BasePermission): # permision so that only those wh
         
         return obj.author == request.user
     
-##### ModelViewsets #####
-class PostList(viewsets.ModelViewSet):
-    permission_classes = [PostUserWritePermission]
+class PostList(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
-    # queryset = Post.postobjects.all()
 
-    # getting items with slug instead of id
-    def get_object(self, queryset=None, **kwargs):
-        item = self.kwargs.get('pk')
-        return get_object_or_404(Post, slug=item)
-
-    # Define Custom Queryset
     def get_queryset(self):
-        return Post.objects.all()
+        user = self.request.user
+        print(user)
+        return Post.objects.filter(author=user)
+
+# class PostDetail(generics.RetrieveUpdateDestroyAPIView, PostUserWritePermission):
+#     permission_classes = [PostUserWritePermission]
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+
+#     def get_queryset(self):
+#         slug = self.request.query_params.get('slug', None)
+#         print(slug)
+#         return Post.objects.filter(slug=slug)
+    
+class PostDetail(generics.RetrieveAPIView):
+    serializer_class = PostSerializer
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        slug = self.kwargs['slug']
+        print(slug)
+        return Post.objects.filter(slug=slug)
+
+# class PostDetail(generics.ListAPIView):
+#     serializer_class = PostSerializer
+
+#     def get_queryset(self):
+#         slug = self.kwargs['pk']
+#         # slug = self.request.query_params.get('slug', None) # usage /?slug=<slug>
+#         print(slug )
+#         return Post.objects.filter(slug=slug)
+    
+class PostListDetailfilter(generics.ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['^slug']
+
+    # '^' Starts-with search.
+    # '=' Exact matches.
+    # '@' Full-text search. (Currently only supported Django's PostgreSQL backend.)
+    # '$' Regex search.
+
+    
+# class PostDetail(generics.RetrieveAPIView):
+#     serializer_class = PostSerializer
+
+#     def get_queryset(self):
+#         slug = self.kwargs['pk']
+#         print(slug)
+#         return Post.objects.filter(id=slug)
+    
+# ##### ModelViewsets #####
+# class PostList(viewsets.ModelViewSet):
+#     permission_classes = [PostUserWritePermission]
+#     serializer_class = PostSerializer
+#     # queryset = Post.postobjects.all()
+
+#     # getting items with slug instead of id
+#     def get_object(self, queryset=None, **kwargs):
+#         item = self.kwargs.get('pk')
+#         return get_object_or_404(Post, slug=item)
+
+#     # Define Custom Queryset
+#     def get_queryset(self):
+#         return Post.objects.all()
 
 
 ###### Viewsets ######
